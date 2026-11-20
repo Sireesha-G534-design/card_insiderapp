@@ -1,21 +1,20 @@
-
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 // StatefulWidget is used because this screen contains animations.
 // Animation values change over time, so we need a StatefulWidget.
-class CardInsiderSplash extends StatefulWidget {
-  const CardInsiderSplash({super.key});
+class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
 
   // Creates the State object for this widget.
   @override
-  State<CardInsiderSplash> createState() => _SplashState();
+  State<SplashScreen> createState() => _SplashState();
 }
 
 // SingleTickerProviderStateMixin provides a ticker for one animation controller.
 // A ticker generates frame updates to run animations smoothly.
-class _SplashState extends State<CardInsiderSplash>
+class _SplashState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
-
   // AnimationController controls the animation.
   // late means it will be initialized later in initState().
   // final means it will be assigned only once.
@@ -30,11 +29,21 @@ class _SplashState extends State<CardInsiderSplash>
     // Creates the animation controller.
     _controller = AnimationController(
       vsync: this, // Uses the current State as the ticker provider.
-      duration: const Duration(seconds: 3), // Total animation duration: 3 seconds.
-    )
+      duration: const Duration(seconds: 3),
+
+      // Total animation duration: 3 seconds.
+    );
+    // Add this listener after controller initialization.
+    _controller.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        if (!mounted) return;
+
+        context.push('/Dashboard');
+      }
+    });
 
     // forward() starts the animation from 0.0 to 1.0.
-    ..forward();
+    _controller.forward();
   }
 
   // dispose() is called when the widget is permanently removed.
@@ -45,22 +54,19 @@ class _SplashState extends State<CardInsiderSplash>
     super.dispose();
   }
 
-  // Reusable method to create each animated card.
+  // Create each animated card.
   //
   // color  = Card background color.
   // start  = Animation starting point (0.0 to 1.0).
   // end    = Animation ending point (0.0 to 1.0).
   // offset = Position of the card relative to its original position.
   Widget card(Color color, double start, double end, Offset offset) {
-
     // ScaleTransition increases or decreases the size of the card
     // according to the animation value.
     return ScaleTransition(
-
       // CurvedAnimation controls the speed and movement style.
       scale: CurvedAnimation(
         parent: _controller, // Uses the main animation controller.
-
         // Interval defines when this particular card animates.
         // For example, 0.0 to 0.35 means the card animates
         // during the first 35% of the total animation.
@@ -74,16 +80,13 @@ class _SplashState extends State<CardInsiderSplash>
       // Transform.translate moves the card from its original position.
       child: Transform.translate(
         offset: offset, // Horizontal and vertical movement.
-
         // Container creates the card design.
         child: Container(
           width: 100, // Card width.
           height: 64, // Card height.
-
           // BoxDecoration controls the card appearance.
           decoration: BoxDecoration(
             color: color, // Card background color.
-
             // Rounds the card corners.
             borderRadius: BorderRadius.circular(10),
           ),
@@ -95,22 +98,18 @@ class _SplashState extends State<CardInsiderSplash>
   // build() creates the splash screen UI.
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-
       // Background color of the splash screen.
       backgroundColor: const Color(0xFFF7FBFF),
 
       // Center places the complete splash content
       // in the middle of the screen.
       body: Center(
-
         // Column arranges widgets vertically.
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
 
           children: [
-
             // SizedBox provides a fixed area for the card animation.
             SizedBox(
               width: 150,
@@ -121,7 +120,6 @@ class _SplashState extends State<CardInsiderSplash>
                 alignment: Alignment.center,
 
                 children: [
-
                   // First dark blue card.
                   // Animation starts at 0% and ends at 35%.
                   // Moves slightly towards the top-left.
@@ -135,12 +133,7 @@ class _SplashState extends State<CardInsiderSplash>
                   // Second bright blue card.
                   // Animation starts at 30% and ends at 65%.
                   // Remains at the center.
-                  card(
-                    const Color(0xFF168FF0),
-                    0.30,
-                    0.65,
-                    Offset.zero,
-                  ),
+                  card(const Color(0xFF168FF0), 0.30, 0.65, Offset.zero),
 
                   // Third light blue card.
                   // Animation starts at 60% and ends at 90%.
@@ -161,7 +154,6 @@ class _SplashState extends State<CardInsiderSplash>
 
             // FadeTransition gradually makes the app name visible.
             FadeTransition(
-
               // Controls the opacity animation.
               opacity: CurvedAnimation(
                 parent: _controller,
@@ -176,21 +168,16 @@ class _SplashState extends State<CardInsiderSplash>
               child: const Text.rich(
                 TextSpan(
                   children: [
-
                     // First part of the app name.
                     TextSpan(
                       text: 'CARD ',
-                      style: TextStyle(
-                        color: Color(0xFF092E70),
-                      ),
+                      style: TextStyle(color: Color(0xFF092E70)),
                     ),
 
                     // Second part of the app name.
                     TextSpan(
                       text: 'INSIDER',
-                      style: TextStyle(
-                        color: Color(0xFF168FF0),
-                      ),
+                      style: TextStyle(color: Color(0xFF168FF0)),
                     ),
                   ],
                 ),
